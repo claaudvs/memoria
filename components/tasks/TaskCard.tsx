@@ -5,7 +5,7 @@ import { BranchChip } from "@/components/tasks/BranchChip";
 import { PinButton } from "@/components/tasks/PinButton";
 import { PriorityChip } from "@/components/tasks/PriorityChip";
 import { StatusBadge } from "@/components/tasks/StatusBadge";
-import { dotColor } from "@/lib/utils";
+import { cn, dotColor } from "@/lib/utils";
 
 export type TaskCardProps = {
   id: string;
@@ -33,7 +33,12 @@ export function TaskCard({
   onEdit,
 }: TaskCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-float transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float-hover">
+    <div
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-float transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float-hover",
+        status === "FINISHED" && "bg-status-finished-tint",
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
           #{number}

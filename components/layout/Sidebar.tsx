@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FolderKanban,
+  GitBranch,
   Home,
   ListChecks,
   Moon,
@@ -33,8 +34,9 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Tareas activas", icon: Home },
+  { href: "/", label: "Tareas", icon: Home },
   { href: "/projects", label: "Proyectos", icon: FolderKanban },
+  { href: "/releases", label: "Releases", icon: GitBranch },
   { href: "/settings", label: "Ajustes", icon: Settings, disabled: true },
 ];
 

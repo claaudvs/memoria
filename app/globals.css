@@ -49,6 +49,7 @@
   --color-status-block-bg: var(--status-block-bg);
   --color-status-finished: var(--status-finished);
   --color-status-finished-bg: var(--status-finished-bg);
+  --color-status-finished-tint: var(--status-finished-tint);
   --color-status-published: var(--status-published);
   --color-status-published-bg: var(--status-published-bg);
 
@@ -106,6 +107,8 @@
   --status-block-bg: #fee2e2;
   --status-finished: #16a34a;
   --status-finished-bg: #dcfce7;
+  /* Whisper-light green wash for the finished-task card background — subtler than the badge bg above. */
+  --status-finished-tint: #f1f9f3;
   --status-published: #d97706;
   --status-published-bg: #fef3c7;
 
@@ -151,6 +154,7 @@
   --status-block-bg: rgba(220, 38, 38, 0.18);
   --status-finished: #4ade80;
   --status-finished-bg: rgba(22, 163, 74, 0.18);
+  --status-finished-tint: rgba(22, 163, 74, 0.08);
   --status-published: #fbbf24;
   --status-published-bg: rgba(217, 119, 6, 0.18);
 

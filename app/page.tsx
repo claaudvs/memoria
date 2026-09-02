@@ -1,12 +1,18 @@
+import type { Status } from "@prisma/client";
+
 import { TaskBoard } from "@/components/tasks/TaskBoard";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+function isDone(status: Status) {
+  return status === "FINISHED" || status === "PUBLISHED_PROD";
+}
+
 export default async function Home() {
   const [tasks, projects, releases, consolidates] = await Promise.all([
     prisma.task.findMany({
-      where: { deletedAt: null, status: { in: ["ACTIVE", "BLOCK"] } },
+      where: { deletedAt: null },
       orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
       include: {
         project: true,
@@ -39,20 +45,24 @@ export default async function Home() {
     }),
   ]);
 
-  const boardTasks = tasks.map((task) => ({
-    id: task.id,
-    number: task.number,
-    title: task.title,
-    projectId: task.projectId,
-    projectName: task.project.name,
-    description: task.description,
-    status: task.status,
-    priority: task.priority,
-    dueDate: task.dueDate,
-    pinned: task.pinned,
-    release: task.taskReleases[0]?.release ?? null,
-    consolidate: task.taskConsolidates[0]?.consolidate ?? null,
-  }));
+  const boardTasks = tasks
+    .map((task) => ({
+      id: task.id,
+      number: task.number,
+      title: task.title,
+      projectId: task.projectId,
+      projectName: task.project.name,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      pinned: task.pinned,
+      release: task.taskReleases[0]?.release ?? null,
+      consolidate: task.taskConsolidates[0]?.consolidate ?? null,
+    }))
+    // Finished/published tasks sink to the end, but keep their existing
+    // pinned/createdAt order (from the query) within each group.
+    .sort((a, b) => Number(isDone(a.status)) - Number(isDone(b.status)));
 
   return (
     <TaskBoard

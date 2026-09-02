@@ -1,6 +1,6 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -14,6 +14,10 @@ import {
   parseProjectFormData,
   type ProjectFormValues,
 } from "@/lib/validations/project";
+import {
+  parseBranchFormData,
+  type BranchFormValues,
+} from "@/lib/validations/branch";
 
 const updateTaskStatusSchema = z.object({
   taskId: z.string().cuid(),
@@ -198,7 +202,6 @@ export async function updateTask(
 
   const formError = newBranchError(parsed.data);
   if (formError) {
-    console.log("DEBUG updateTask formError", formError);
     return { success: false, formError };
   }
 
@@ -283,4 +286,165 @@ export async function updateProject(
   revalidatePath("/projects");
   revalidatePath(`/projects/${projectId}`);
   return { success: true };
+}
+
+export type BranchFormState = {
+  success: boolean;
+  fieldErrors?: Partial<Record<keyof BranchFormValues, string[]>>;
+  formError?: string;
+};
+
+function toBranchData(values: BranchFormValues) {
+  return {
+    projectId: values.projectId,
+    name: values.name,
+    description: values.description ? values.description : null,
+    branchName: values.branchName,
+    status: values.status,
+  };
+}
+
+function isDuplicateBranchError(error: unknown) {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2002"
+  );
+}
+
+function revalidateBranchPaths(projectId: string) {
+  revalidatePath("/releases");
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+}
+
+export async function createRelease(
+  _prevState: BranchFormState,
+  formData: FormData,
+): Promise<BranchFormState> {
+  const parsed = parseBranchFormData(formData);
+  if (!parsed.success) {
+    return { success: false, fieldErrors: parsed.error.flatten().fieldErrors };
+  }
+
+  try {
+    await prisma.release.create({ data: toBranchData(parsed.data) });
+  } catch (error) {
+    if (isDuplicateBranchError(error)) {
+      return {
+        success: false,
+        formError: "Ya existe un release con ese branch en este proyecto.",
+      };
+    }
+    throw error;
+  }
+
+  revalidateBranchPaths(parsed.data.projectId);
+  return { success: true };
+}
+
+export async function updateRelease(
+  releaseId: string,
+  _prevState: BranchFormState,
+  formData: FormData,
+): Promise<BranchFormState> {
+  const parsed = parseBranchFormData(formData);
+  if (!parsed.success) {
+    return { success: false, fieldErrors: parsed.error.flatten().fieldErrors };
+  }
+
+  try {
+    await prisma.release.update({
+      where: { id: releaseId },
+      data: toBranchData(parsed.data),
+    });
+  } catch (error) {
+    if (isDuplicateBranchError(error)) {
+      return {
+        success: false,
+        formError: "Ya existe un release con ese branch en este proyecto.",
+      };
+    }
+    throw error;
+  }
+
+  revalidateBranchPaths(parsed.data.projectId);
+  return { success: true };
+}
+
+export async function createConsolidate(
+  _prevState: BranchFormState,
+  formData: FormData,
+): Promise<BranchFormState> {
+  const parsed = parseBranchFormData(formData);
+  if (!parsed.success) {
+    return { success: false, fieldErrors: parsed.error.flatten().fieldErrors };
+  }
+
+  try {
+    await prisma.consolidate.create({ data: toBranchData(parsed.data) });
+  } catch (error) {
+    if (isDuplicateBranchError(error)) {
+      return {
+        success: false,
+        formError: "Ya existe un consolidado con ese branch en este proyecto.",
+      };
+    }
+    throw error;
+  }
+
+  revalidateBranchPaths(parsed.data.projectId);
+  return { success: true };
+}
+
+export async function updateConsolidate(
+  consolidateId: string,
+  _prevState: BranchFormState,
+  formData: FormData,
+): Promise<BranchFormState> {
+  const parsed = parseBranchFormData(formData);
+  if (!parsed.success) {
+    return { success: false, fieldErrors: parsed.error.flatten().fieldErrors };
+  }
+
+  try {
+    await prisma.consolidate.update({
+      where: { id: consolidateId },
+      data: toBranchData(parsed.data),
+    });
+  } catch (error) {
+    if (isDuplicateBranchError(error)) {
+      return {
+        success: false,
+        formError: "Ya existe un consolidado con ese branch en este proyecto.",
+      };
+    }
+    throw error;
+  }
+
+  revalidateBranchPaths(parsed.data.projectId);
+  return { success: true };
+}
+
+export async function deleteRelease(releaseId: string) {
+  const id = z.string().cuid().parse(releaseId);
+
+  const release = await prisma.release.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+    select: { projectId: true },
+  });
+
+  revalidateBranchPaths(release.projectId);
+}
+
+export async function deleteConsolidate(consolidateId: string) {
+  const id = z.string().cuid().parse(consolidateId);
+
+  const consolidate = await prisma.consolidate.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+    select: { projectId: true },
+  });
+
+  revalidateBranchPaths(consolidate.projectId);
 }

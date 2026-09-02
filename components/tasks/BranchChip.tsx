@@ -30,20 +30,20 @@ export function BranchChip({
     <Tooltip>
       <TooltipTrigger
         onClick={handleCopy}
-        className="rounded-full outline-none"
+        className="min-w-0 max-w-full rounded-full outline-none"
       >
         <Badge
           variant="outline"
           className={cn(
-            "cursor-pointer gap-1 border-transparent bg-secondary text-secondary-foreground hover:bg-muted",
+            "max-w-full cursor-pointer gap-1 border-transparent bg-secondary text-secondary-foreground hover:bg-muted",
           )}
         >
           {copied ? (
-            <Check className="size-3" />
+            <Check className="size-3 shrink-0" />
           ) : (
-            <GitBranch className="size-3" />
+            <GitBranch className="size-3 shrink-0" />
           )}
-          {label}
+          <span className="truncate">{label}</span>
         </Badge>
       </TooltipTrigger>
       <TooltipContent>{copied ? "¡Copiado!" : branchName}</TooltipContent>

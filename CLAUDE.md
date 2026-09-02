@@ -89,7 +89,7 @@ Every table includes by default: `id` (PK), `created_at`, `updated_at`, `deleted
 
 - **CRUD happens via modal/drawer, not dedicated routes.** Creating or editing a task shouldn't navigate the person away from the list they're on.
 - **Filters use query params**, not new routes: `/?status=active&project=2`, not `/tasks/active`.
-- **Project-scoped catalogs are nested**: `/projects/:id/releases`, not a flat `/releases` — the URL mirrors the `project_id` in the data model.
+- **Releases and Consolidates have both a global section and a project-scoped view**: `/releases` is a global nav item (sidebar, next to Tareas/Proyectos) with tabs Releases | Consolidates, listing them across all projects — same pattern as the global Tasks list, where each card shows its project. `/projects/:id` still has its own Releases/Consolidates tabs, filtered to that project. Either way, creating one always requires picking its project (the FK) — the catalog-per-project data model doesn't change, only how it's browsed. (This revises an earlier decision that kept these nested-only under `/projects/:id`.)
 - `/` is the active-tasks list today. Planned for later (not yet implemented): a "home preference" setting under `/settings` that decides what `/` shows — for now it can live as a single loose config row; once `Users` exists, it becomes a field on that table.
 - `/auth/login` is not part of the main nav — it only appears when there's no session.
 
