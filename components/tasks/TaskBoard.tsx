@@ -53,9 +53,22 @@ export function TaskBoard({
     setModalOpen(true);
   }
 
+  const doneCount = tasks.filter(
+    (task) => task.status === "FINISHED" || task.status === "PUBLISHED_PROD",
+  ).length;
+  const donePercentage =
+    tasks.length === 0 ? 0 : Math.round((doneCount / tasks.length) * 100);
+
   return (
     <div className="flex flex-1 flex-col gap-6 p-8">
-      <h1 className="text-3xl font-bold tracking-tight">Tareas</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-3xl font-bold tracking-tight">Tareas</h1>
+        {tasks.length > 0 && (
+          <span className="rounded-full bg-status-finished-bg px-2.5 py-1 text-xs font-semibold text-status-finished">
+            {donePercentage}% completado
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <button
