@@ -1,4 +1,5 @@
 import { Clock, ListTodo } from "lucide-react";
+import Link from "next/link";
 
 import { avatarStyle, cn, formatRelativeTime, initial } from "@/lib/utils";
 
@@ -18,8 +19,8 @@ export function ProjectCard({
   activeTaskCount,
 }: ProjectCardProps) {
   return (
-    <div
-      data-project-id={id}
+    <Link
+      href={`/projects/${id}`}
       className="flex flex-col gap-4 rounded-2xl bg-card p-4 shadow-float transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float-hover"
     >
       <div
@@ -50,6 +51,6 @@ export function ProjectCard({
           {formatRelativeTime(updatedAt)}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

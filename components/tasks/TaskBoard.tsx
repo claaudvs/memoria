@@ -6,7 +6,9 @@ import { useState } from "react";
 import { TaskCard, type TaskCardProps } from "@/components/tasks/TaskCard";
 import {
   TaskModal,
+  type TaskModalConsolidate,
   type TaskModalProject,
+  type TaskModalRelease,
   type TaskModalTask,
 } from "@/components/tasks/TaskModal";
 
@@ -19,9 +21,13 @@ export type TaskBoardTask = Omit<TaskCardProps, "onEdit"> & {
 export function TaskBoard({
   tasks,
   projects,
+  releases,
+  consolidates,
 }: {
   tasks: TaskBoardTask[];
   projects: TaskModalProject[];
+  releases: TaskModalRelease[];
+  consolidates: TaskModalConsolidate[];
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskModalTask | null>(null);
@@ -41,6 +47,8 @@ export function TaskBoard({
       priority: task.priority,
       dueDate: task.dueDate,
       pinned: task.pinned,
+      currentReleaseId: task.release?.id ?? null,
+      currentConsolidateId: task.consolidate?.id ?? null,
     });
     setModalOpen(true);
   }
@@ -71,6 +79,8 @@ export function TaskBoard({
           open={modalOpen}
           onOpenChange={setModalOpen}
           projects={projects}
+          releases={releases}
+          consolidates={consolidates}
           task={editingTask}
         />
       )}

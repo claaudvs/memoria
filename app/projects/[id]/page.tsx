@@ -1,12 +1,27 @@
-import { TaskBoard } from "@/components/tasks/TaskBoard";
+import { notFound } from "next/navigation";
+
+import { ProjectDetail } from "@/components/projects/ProjectDetail";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const [tasks, projects, releases, consolidates] = await Promise.all([
+export default async function ProjectDetailPage(
+  props: PageProps<"/projects/[id]">,
+) {
+  const { id } = await props.params;
+
+  const [
+    project,
+    tasks,
+    releases,
+    consolidates,
+    allProjects,
+    allReleases,
+    allConsolidates,
+  ] = await Promise.all([
+    prisma.project.findFirst({ where: { id, deletedAt: null } }),
     prisma.task.findMany({
-      where: { deletedAt: null, status: { in: ["ACTIVE", "BLOCK"] } },
+      where: { projectId: id, deletedAt: null },
       orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
       include: {
         project: true,
@@ -21,6 +36,14 @@ export default async function Home() {
           include: { consolidate: true },
         },
       },
+    }),
+    prisma.release.findMany({
+      where: { projectId: id, deletedAt: null },
+      orderBy: { name: "asc" },
+    }),
+    prisma.consolidate.findMany({
+      where: { projectId: id, deletedAt: null },
+      orderBy: { name: "asc" },
     }),
     prisma.project.findMany({
       where: { deletedAt: null },
@@ -39,7 +62,11 @@ export default async function Home() {
     }),
   ]);
 
-  const boardTasks = tasks.map((task) => ({
+  if (!project) {
+    notFound();
+  }
+
+  const detailTasks = tasks.map((task) => ({
     id: task.id,
     number: task.number,
     title: task.title,
@@ -55,11 +82,18 @@ export default async function Home() {
   }));
 
   return (
-    <TaskBoard
-      tasks={boardTasks}
-      projects={projects}
+    <ProjectDetail
+      project={{
+        id: project.id,
+        name: project.name,
+        description: project.description,
+      }}
+      tasks={detailTasks}
       releases={releases}
       consolidates={consolidates}
+      allProjects={allProjects}
+      allReleases={allReleases}
+      allConsolidates={allConsolidates}
     />
   );
 }

@@ -15,8 +15,8 @@ export type TaskCardProps = {
   status: Status;
   priority: Priority;
   pinned: boolean;
-  release: { name: string; branchName: string } | null;
-  consolidate: { name: string; branchName: string } | null;
+  release: { id: string; name: string; branchName: string } | null;
+  consolidate: { id: string; name: string; branchName: string } | null;
   onEdit: () => void;
 };
 

@@ -3,6 +3,10 @@ import { z } from "zod";
 export const STATUS_VALUES = ["ACTIVE", "BLOCK", "FINISHED", "PUBLISHED_PROD"] as const;
 export const PRIORITY_VALUES = ["LOW", "MEDIUM", "HIGH"] as const;
 
+// Sentinel select value meaning "create a new release/consolidate", as opposed
+// to picking an existing one from the project's catalog (or leaving it unset).
+export const NEW_BRANCH_VALUE = "__new__";
+
 export const taskFormSchema = z.object({
   projectId: z.string().cuid({ message: "Seleccioná un proyecto." }),
   title: z
@@ -20,6 +24,12 @@ export const taskFormSchema = z.object({
   priority: z.enum(PRIORITY_VALUES),
   dueDate: z.string().optional().or(z.literal("")),
   pinned: z.boolean(),
+  releaseId: z.string().optional().or(z.literal("")),
+  releaseName: z.string().trim().max(120).optional().or(z.literal("")),
+  releaseBranchName: z.string().trim().max(200).optional().or(z.literal("")),
+  consolidateId: z.string().optional().or(z.literal("")),
+  consolidateName: z.string().trim().max(120).optional().or(z.literal("")),
+  consolidateBranchName: z.string().trim().max(200).optional().or(z.literal("")),
 });
 
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
@@ -33,5 +43,14 @@ export function parseTaskFormData(formData: FormData) {
     priority: formData.get("priority"),
     dueDate: formData.get("dueDate"),
     pinned: formData.get("pinned") === "on",
+    releaseId: formData.get("releaseId"),
+    // The new-release/new-consolidate fields only exist in the DOM while
+    // NEW_BRANCH_VALUE is selected — formData.get() returns null otherwise,
+    // which z.string().optional() rejects (it only allows undefined).
+    releaseName: formData.get("releaseName") ?? "",
+    releaseBranchName: formData.get("releaseBranchName") ?? "",
+    consolidateId: formData.get("consolidateId"),
+    consolidateName: formData.get("consolidateName") ?? "",
+    consolidateBranchName: formData.get("consolidateBranchName") ?? "",
   });
 }
