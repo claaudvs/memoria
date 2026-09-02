@@ -1,6 +1,6 @@
 import type { Priority } from "@prisma/client";
+import { ArrowUpRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const PRIORITY_LABEL: Record<Priority, string> = {
@@ -9,16 +9,17 @@ const PRIORITY_LABEL: Record<Priority, string> = {
   HIGH: "Alta",
 };
 
-const PRIORITY_STYLE: Record<Priority, string> = {
-  LOW: "bg-priority-low-bg text-priority-low",
-  MEDIUM: "bg-priority-medium-bg text-priority-medium",
-  HIGH: "bg-priority-high-bg text-priority-high",
+const PRIORITY_ICON_COLOR: Record<Priority, string> = {
+  LOW: "text-priority-low",
+  MEDIUM: "text-priority-medium",
+  HIGH: "text-priority-high",
 };
 
 export function PriorityChip({ priority }: { priority: Priority }) {
   return (
-    <Badge variant="outline" className={cn("border-transparent", PRIORITY_STYLE[priority])}>
+    <span className="inline-flex h-5 shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 text-xs font-medium text-muted-foreground">
+      <ArrowUpRight className={cn("size-3", PRIORITY_ICON_COLOR[priority])} />
       {PRIORITY_LABEL[priority]}
-    </Badge>
+    </span>
   );
 }

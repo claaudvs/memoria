@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 
 import {
   Tooltip,
@@ -25,11 +25,18 @@ import { cn } from "@/lib/utils";
 const COLLAPSED_KEY = "memoria:sidebar-collapsed";
 const THEME_KEY = "memoria:theme";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  disabled?: boolean;
+};
+
+const navItems: NavItem[] = [
   { href: "/", label: "Tareas activas", icon: Home },
-  { href: "/projects", label: "Proyectos", icon: FolderKanban, disabled: true },
+  { href: "/projects", label: "Proyectos", icon: FolderKanban },
   { href: "/settings", label: "Ajustes", icon: Settings, disabled: true },
-] as const;
+];
 
 export function Sidebar() {
   const pathname = usePathname();

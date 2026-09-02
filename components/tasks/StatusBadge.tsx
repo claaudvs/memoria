@@ -54,10 +54,11 @@ export function StatusBadge({
         />
       }
       className={cn(
-        "cursor-pointer border-transparent disabled:cursor-wait disabled:opacity-60",
+        "cursor-pointer gap-1.5 border-transparent disabled:cursor-wait disabled:opacity-60",
         STATUS_STYLE[status],
       )}
     >
+      <span className="size-1.5 shrink-0 rounded-full bg-current" />
       {STATUS_LABEL[status]}
     </Badge>
   );
