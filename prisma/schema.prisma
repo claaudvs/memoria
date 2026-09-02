@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Status {
+  ACTIVE
+  BLOCK
+  FINISHED
+  PUBLISHED_PROD
+
+  @@map("status")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("priority")
+}
+
+model Project {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  name        String
+  description String?
+
+  tasks        Task[]
+  releases     Release[]
+  consolidates Consolidate[]
+
+  @@map("projects")
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  projectId   String    @map("project_id")
+  title       String
+  number      Int       @default(autoincrement())
+  description String?
+  status      Status    @default(ACTIVE)
+  priority    Priority  @default(MEDIUM)
+  dueDate     DateTime? @map("due_date")
+  pinned      Boolean   @default(false)
+
+  project          Project           @relation(fields: [projectId], references: [id])
+  taskReleases     TaskRelease[]
+  taskConsolidates TaskConsolidate[]
+
+  @@map("tasks")
+}
+
+model Release {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  projectId   String  @map("project_id")
+  name        String
+  description String?
+  status      Status  @default(ACTIVE)
+  branchName  String  @map("branch_name")
+
+  project      Project       @relation(fields: [projectId], references: [id])
+  taskReleases TaskRelease[]
+
+  @@unique([projectId, branchName])
+  @@map("releases")
+}
+
+model Consolidate {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  projectId   String  @map("project_id")
+  name        String
+  description String?
+  status      Status  @default(ACTIVE)
+  branchName  String  @map("branch_name")
+
+  project          Project           @relation(fields: [projectId], references: [id])
+  taskConsolidates TaskConsolidate[]
+
+  @@unique([projectId, branchName])
+  @@map("consolidates")
+}
+
+// History, append-only: the "active" release for a task is the row with the
+// most recent createdAt for that taskId — no separate is-current flag.
+model TaskRelease {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  taskId    String @map("task_id")
+  releaseId String @map("release_id")
+
+  task    Task    @relation(fields: [taskId], references: [id])
+  release Release @relation(fields: [releaseId], references: [id])
+
+  @@map("task_releases")
+}
+
+// History, append-only: same rule as TaskRelease, keyed off consolidateId.
+model TaskConsolidate {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  taskId        String @map("task_id")
+  consolidateId String @map("consolidate_id")
+
+  task        Task        @relation(fields: [taskId], references: [id])
+  consolidate Consolidate @relation(fields: [consolidateId], references: [id])
+
+  @@map("task_consolidates")
+}

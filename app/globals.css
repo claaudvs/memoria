@@ -1,26 +1,171 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Soft-UI status badges: Active = blue, Block = red, Finished = green, Published prod = amber. */
+  --color-status-active: var(--status-active);
+  --color-status-active-bg: var(--status-active-bg);
+  --color-status-block: var(--status-block);
+  --color-status-block-bg: var(--status-block-bg);
+  --color-status-finished: var(--status-finished);
+  --color-status-finished-bg: var(--status-finished-bg);
+  --color-status-published: var(--status-published);
+  --color-status-published-bg: var(--status-published-bg);
+
+  /* Priority chips: not color-specified in CLAUDE.md — a violet scale, kept distinct from the status hues above. */
+  --color-priority-low: var(--priority-low);
+  --color-priority-low-bg: var(--priority-low-bg);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-medium-bg: var(--priority-medium-bg);
+  --color-priority-high: var(--priority-high);
+  --color-priority-high-bg: var(--priority-high-bg);
+
+  /* Diffuse card shadow — no hard borders, soft elevation instead. */
+  --shadow-soft: 0 1px 2px rgba(23, 23, 26, 0.03), 0 8px 24px rgba(23, 23, 26, 0.06);
+  --shadow-soft-md: 0 2px 4px rgba(23, 23, 26, 0.04), 0 12px 32px rgba(23, 23, 26, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* App chrome: light gray background, white content cards float above it. */
+  --background: #f0f1f5;
+  --foreground: #17171a;
+  --card: #ffffff;
+  --card-foreground: #17171a;
+  --popover: #ffffff;
+  --popover-foreground: #17171a;
+  /* Solid black = the "active/selected" treatment app-wide (nav pill, status pill if reused). */
+  --primary: #17171a;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f7;
+  --secondary-foreground: #17171a;
+  --muted: #eceef2;
+  --muted-foreground: #6b7280;
+  --accent: #f5f5f7;
+  --accent-foreground: #17171a;
+  --destructive: #dc2626;
+  --border: rgba(23, 23, 26, 0.06);
+  --input: rgba(23, 23, 26, 0.08);
+  --ring: rgba(23, 23, 26, 0.25);
+  --radius: 1rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #17171a;
+  --sidebar-primary: #17171a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f7;
+  --sidebar-accent-foreground: #17171a;
+  --sidebar-border: rgba(23, 23, 26, 0.06);
+  --sidebar-ring: rgba(23, 23, 26, 0.25);
+
+  --status-active: #2563eb;
+  --status-active-bg: #dbeafe;
+  --status-block: #dc2626;
+  --status-block-bg: #fee2e2;
+  --status-finished: #16a34a;
+  --status-finished-bg: #dcfce7;
+  --status-published: #d97706;
+  --status-published-bg: #fef3c7;
+
+  --priority-low: #64748b;
+  --priority-low-bg: #f1f5f9;
+  --priority-medium: #7c3aed;
+  --priority-medium-bg: #ede9fe;
+  --priority-high: #a21caf;
+  --priority-high-bg: #fae8ff;
+}
+
+.dark {
+  --background: #16171b;
+  --foreground: #f2f2f4;
+  --card: #1f2024;
+  --card-foreground: #f2f2f4;
+  --popover: #1f2024;
+  --popover-foreground: #f2f2f4;
+  --primary: #f2f2f4;
+  --primary-foreground: #17171a;
+  --secondary: #26272c;
+  --secondary-foreground: #f2f2f4;
+  --muted: #26272c;
+  --muted-foreground: #9a9aa2;
+  --accent: #26272c;
+  --accent-foreground: #f2f2f4;
+  --destructive: #f87171;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: rgba(255, 255, 255, 0.2);
+  --sidebar: #1f2024;
+  --sidebar-foreground: #f2f2f4;
+  --sidebar-primary: #f2f2f4;
+  --sidebar-primary-foreground: #17171a;
+  --sidebar-accent: #26272c;
+  --sidebar-accent-foreground: #f2f2f4;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(255, 255, 255, 0.2);
+
+  --status-active: #60a5fa;
+  --status-active-bg: rgba(37, 99, 235, 0.18);
+  --status-block: #f87171;
+  --status-block-bg: rgba(220, 38, 38, 0.18);
+  --status-finished: #4ade80;
+  --status-finished-bg: rgba(22, 163, 74, 0.18);
+  --status-published: #fbbf24;
+  --status-published-bg: rgba(217, 119, 6, 0.18);
+
+  --priority-low: #94a3b8;
+  --priority-low-bg: rgba(100, 116, 139, 0.18);
+  --priority-medium: #a78bfa;
+  --priority-medium-bg: rgba(124, 58, 237, 0.18);
+  --priority-high: #e879f9;
+  --priority-high-bg: rgba(162, 28, 175, 0.18);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
