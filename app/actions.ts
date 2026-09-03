@@ -18,6 +18,8 @@ import {
   parseBranchFormData,
   type BranchFormValues,
 } from "@/lib/validations/branch";
+import { todoGroupFormSchema, todoItemFormSchema } from "@/lib/validations/todo";
+import { noteFormSchema } from "@/lib/validations/note";
 
 const updateTaskStatusSchema = z.object({
   taskId: z.string().cuid(),
@@ -447,4 +449,91 @@ export async function deleteConsolidate(consolidateId: string) {
   });
 
   revalidateBranchPaths(consolidate.projectId);
+}
+
+function revalidateTaskDetailPath(taskNumber: number) {
+  revalidatePath(`/tasks/${taskNumber}`);
+}
+
+export async function createTodoGroup(taskNumber: number, formData: FormData) {
+  const input = todoGroupFormSchema.parse({
+    taskId: formData.get("taskId"),
+    title: formData.get("title"),
+  });
+
+  await prisma.todo.create({ data: { taskId: input.taskId, title: input.title } });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function deleteTodoGroup(todoId: string, taskNumber: number) {
+  const id = z.string().cuid().parse(todoId);
+
+  await prisma.todo.update({ where: { id }, data: { deletedAt: new Date() } });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function createTodoItem(taskNumber: number, formData: FormData) {
+  const input = todoItemFormSchema.parse({
+    todoId: formData.get("todoId"),
+    title: formData.get("title"),
+  });
+
+  const lastItem = await prisma.todoItem.findFirst({
+    where: { todoId: input.todoId, deletedAt: null },
+    orderBy: { order: "desc" },
+    select: { order: true },
+  });
+
+  await prisma.todoItem.create({
+    data: {
+      todoId: input.todoId,
+      title: input.title,
+      order: (lastItem?.order ?? -1) + 1,
+    },
+  });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function toggleTodoItem(
+  itemId: string,
+  completed: boolean,
+  taskNumber: number,
+) {
+  const id = z.string().cuid().parse(itemId);
+
+  await prisma.todoItem.update({ where: { id }, data: { completed } });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function deleteTodoItem(itemId: string, taskNumber: number) {
+  const id = z.string().cuid().parse(itemId);
+
+  await prisma.todoItem.update({ where: { id }, data: { deletedAt: new Date() } });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function createNote(taskNumber: number, formData: FormData) {
+  const input = noteFormSchema.parse({
+    taskId: formData.get("taskId"),
+    comment: formData.get("comment"),
+  });
+
+  await prisma.note.create({
+    data: { taskId: input.taskId, comment: input.comment },
+  });
+
+  revalidateTaskDetailPath(taskNumber);
+}
+
+export async function deleteNote(noteId: string, taskNumber: number) {
+  const id = z.string().cuid().parse(noteId);
+
+  await prisma.note.update({ where: { id }, data: { deletedAt: new Date() } });
+
+  revalidateTaskDetailPath(taskNumber);
 }

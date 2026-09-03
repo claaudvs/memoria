@@ -61,25 +61,35 @@ export function TaskBoard({
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-8">
-      <div className="flex items-center gap-3">
-        <h1 className="text-3xl font-bold tracking-tight">Tareas</h1>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-baseline justify-between gap-3">
+          <h1 className="text-3xl font-bold tracking-tight">Tareas</h1>
+          {tasks.length > 0 && (
+            <span className="font-mono text-xs font-medium text-muted-foreground">
+              {doneCount} de {tasks.length} · {donePercentage}%
+            </span>
+          )}
+        </div>
         {tasks.length > 0 && (
-          <span className="rounded-full bg-status-finished-bg px-2.5 py-1 text-xs font-semibold text-status-finished">
-            {donePercentage}% completado
-          </span>
+          <div className="h-[3px] overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-status-finished transition-all"
+              style={{ width: `${donePercentage}%` }}
+            />
+          </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <button
           type="button"
           onClick={openCreate}
-          className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border bg-transparent text-muted-foreground transition-colors hover:border-foreground/20 hover:bg-card hover:text-foreground"
+          className="col-span-full flex items-center gap-3 rounded-xl border-2 border-dashed border-border bg-transparent px-5 py-4 text-left text-muted-foreground transition-colors hover:border-foreground/20 hover:bg-card hover:text-foreground"
         >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Plus className="size-5" />
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Plus className="size-4" />
           </span>
-          <span className="text-sm font-medium">Nueva tarea</span>
+          <span className="text-sm font-semibold">Nueva tarea</span>
         </button>
 
         {tasks.map((task) => (
