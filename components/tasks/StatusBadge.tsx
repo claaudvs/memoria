@@ -24,12 +24,21 @@ const STATUS_STYLE: Record<Status, string> = {
   PUBLISHED_PROD: "bg-status-published-bg text-status-published",
 };
 
+const STATUS_DOT_COLOR: Record<Status, string> = {
+  ACTIVE: "bg-status-active",
+  BLOCK: "bg-status-block",
+  FINISHED: "bg-status-finished",
+  PUBLISHED_PROD: "bg-status-published",
+};
+
 export function StatusBadge({
   taskId,
   status,
+  variant = "pill",
 }: {
   taskId: string;
   status: Status;
+  variant?: "pill" | "plain";
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -41,6 +50,21 @@ export function StatusBadge({
       await updateTaskStatus(taskId, next);
       router.refresh();
     });
+  }
+
+  if (variant === "plain") {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={isPending}
+        title="Click para cambiar de estado"
+        className="flex cursor-pointer items-center gap-1.5 disabled:cursor-wait disabled:opacity-60"
+      >
+        <span className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT_COLOR[status])} />
+        {STATUS_LABEL[status]}
+      </button>
+    );
   }
 
   return (

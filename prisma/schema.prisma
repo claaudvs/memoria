@@ -23,6 +23,13 @@ enum Priority {
   @@map("priority")
 }
 
+enum TodoStatus {
+  OPEN
+  DONE
+
+  @@map("todo_status")
+}
+
 model Project {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @map("created_at")
@@ -35,6 +42,7 @@ model Project {
   tasks        Task[]
   releases     Release[]
   consolidates Consolidate[]
+  notes        Note[]
 
   @@map("projects")
 }
@@ -57,6 +65,8 @@ model Task {
   project          Project           @relation(fields: [projectId], references: [id])
   taskReleases     TaskRelease[]
   taskConsolidates TaskConsolidate[]
+  todos            Todo[]
+  notes            Note[]
 
   @@map("tasks")
 }
@@ -130,4 +140,56 @@ model TaskConsolidate {
   consolidate Consolidate @relation(fields: [consolidateId], references: [id])
 
   @@map("task_consolidates")
+}
+
+// Grouped checklist attached to a task.
+model Todo {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  taskId      String     @map("task_id")
+  title       String
+  description String?
+  status      TodoStatus @default(OPEN)
+
+  task  Task       @relation(fields: [taskId], references: [id])
+  items TodoItem[]
+
+  @@map("todos")
+}
+
+model TodoItem {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  todoId    String  @map("todo_id")
+  title     String
+  completed Boolean @default(false)
+  order     Int     @default(0)
+
+  todo Todo @relation(fields: [todoId], references: [id])
+
+  @@map("todo_items")
+}
+
+// Comment on either a task or a project — exactly one of the two FKs is set,
+// enforced in the server action rather than at the DB level.
+model Note {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  taskId    String? @map("task_id")
+  projectId String? @map("project_id")
+  comment   String
+
+  task    Task?    @relation(fields: [taskId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@map("notes")
 }

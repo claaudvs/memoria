@@ -70,3 +70,7 @@ export function dotColor(seed: string) {
 export function initial(text: string) {
   return text.trim().charAt(0).toUpperCase() || "?"
 }
+
+export function isTaskDone(status: string) {
+  return status === "FINISHED" || status === "PUBLISHED_PROD"
+}
