@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Cat,
   ChevronLeft,
   ChevronRight,
   FolderKanban,
@@ -76,7 +77,7 @@ export function Sidebar() {
     >
       <div className="flex items-center justify-between">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-          <ListChecks className="size-5" />
+          <Cat className="size-5" />
         </div>
         <button
           type="button"
