@@ -11,12 +11,38 @@ import {
   type TaskModalRelease,
   type TaskModalTask,
 } from "@/components/tasks/TaskModal";
+import { cn } from "@/lib/utils";
 
 export type TaskBoardTask = Omit<TaskCardProps, "onEdit"> & {
   projectId: string;
   description: string | null;
   dueDate: Date | null;
 };
+
+type FilterKey = "all" | "active" | "pinned" | "finished" | "published";
+
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: "all", label: "Todas" },
+  { key: "active", label: "Activas" },
+  { key: "pinned", label: "Fijadas" },
+  { key: "finished", label: "Finalizadas" },
+  { key: "published", label: "Publicadas a prod" },
+];
+
+function matchesFilter(task: TaskBoardTask, filter: FilterKey) {
+  switch (filter) {
+    case "all":
+      return true;
+    case "active":
+      return task.status === "ACTIVE";
+    case "pinned":
+      return task.pinned;
+    case "finished":
+      return task.status === "FINISHED";
+    case "published":
+      return task.status === "PUBLISHED_PROD";
+  }
+}
 
 export function TaskBoard({
   tasks,
@@ -31,6 +57,7 @@ export function TaskBoard({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskModalTask | null>(null);
+  const [filter, setFilter] = useState<FilterKey>("all");
 
   function openCreate() {
     setEditingTask(null);
@@ -58,6 +85,7 @@ export function TaskBoard({
   ).length;
   const donePercentage =
     tasks.length === 0 ? 0 : Math.round((doneCount / tasks.length) * 100);
+  const filteredTasks = tasks.filter((task) => matchesFilter(task, filter));
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-8">
@@ -80,6 +108,42 @@ export function TaskBoard({
         )}
       </div>
 
+      {tasks.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {FILTERS.map(({ key, label }) => {
+            const active = filter === key;
+            const count = tasks.filter((task) =>
+              matchesFilter(task, key),
+            ).length;
+
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setFilter(key)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-[10px] border border-border px-3.5 py-2 text-xs font-medium transition-colors",
+                  active
+                    ? "bg-card text-foreground shadow-soft"
+                    : "bg-card/60 text-muted-foreground hover:bg-card hover:text-foreground",
+                )}
+              >
+                {active && (
+                  <span className="h-3 w-[3px] shrink-0 rounded-[2px] bg-status-active" />
+                )}
+                {key === "pinned" && (
+                  <span className="size-1.5 shrink-0 rotate-45 bg-status-published" />
+                )}
+                {label}
+                <span className="font-mono text-[10.5px] text-muted-foreground">
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <button
           type="button"
@@ -92,7 +156,7 @@ export function TaskBoard({
           <span className="text-sm font-semibold">Nueva tarea</span>
         </button>
 
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <TaskCard key={task.id} {...task} onEdit={() => openEdit(task)} />
         ))}
       </div>

@@ -18,6 +18,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-sidebar-rail: var(--sidebar-rail);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -100,6 +101,8 @@
   --sidebar-accent-foreground: #17171a;
   --sidebar-border: rgba(23, 23, 26, 0.06);
   --sidebar-ring: rgba(23, 23, 26, 0.25);
+  /* Color rail marking the active nav item — kept distinct from status/priority hues. */
+  --sidebar-rail: oklch(0.62 0.11 200);
 
   --status-active: #2563eb;
   --status-active-bg: #dbeafe;
@@ -147,6 +150,7 @@
   --sidebar-accent-foreground: #f2f2f4;
   --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: rgba(255, 255, 255, 0.2);
+  --sidebar-rail: oklch(0.7 0.11 200);
 
   --status-active: #60a5fa;
   --status-active-bg: rgba(37, 99, 235, 0.18);
