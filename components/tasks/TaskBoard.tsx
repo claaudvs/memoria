@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 export type TaskBoardTask = Omit<TaskCardProps, "onEdit"> & {
   projectId: string;
   description: string | null;
+  ticketNumber: string | null;
+  url: string | null;
   dueDate: Date | null;
 };
 
@@ -70,6 +72,8 @@ export function TaskBoard({
       projectId: task.projectId,
       title: task.title,
       description: task.description,
+      ticketNumber: task.ticketNumber,
+      url: task.url,
       status: task.status,
       priority: task.priority,
       dueDate: task.dueDate,

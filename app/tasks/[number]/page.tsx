@@ -72,6 +72,8 @@ export default async function TaskDetailPage(
         number: task.number,
         title: task.title,
         description: task.description,
+        ticketNumber: task.ticketNumber,
+        url: task.url,
         status: task.status,
         priority: task.priority,
         dueDate: task.dueDate,

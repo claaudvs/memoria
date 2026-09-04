@@ -53,6 +53,8 @@
   --color-status-finished-tint: var(--status-finished-tint);
   --color-status-published: var(--status-published);
   --color-status-published-bg: var(--status-published-bg);
+  --color-status-qa: var(--status-qa);
+  --color-status-qa-bg: var(--status-qa-bg);
 
   /* Priority chips: not color-specified in CLAUDE.md — a violet scale, kept distinct from the status hues above. */
   --color-priority-low: var(--priority-low);
@@ -114,6 +116,8 @@
   --status-finished-tint: #f1f9f3;
   --status-published: #d97706;
   --status-published-bg: #fef3c7;
+  --status-qa: #0d9488;
+  --status-qa-bg: #ccfbf1;
 
   --priority-low: #64748b;
   --priority-low-bg: #f1f5f9;
@@ -161,6 +165,8 @@
   --status-finished-tint: rgba(22, 163, 74, 0.08);
   --status-published: #fbbf24;
   --status-published-bg: rgba(217, 119, 6, 0.18);
+  --status-qa: #2dd4bf;
+  --status-qa-bg: rgba(13, 148, 136, 0.18);
 
   --priority-low: #94a3b8;
   --priority-low-bg: rgba(100, 116, 139, 0.18);

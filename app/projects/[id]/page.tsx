@@ -73,6 +73,8 @@ export default async function ProjectDetailPage(
     projectId: task.projectId,
     projectName: task.project.name,
     description: task.description,
+    ticketNumber: task.ticketNumber,
+    url: task.url,
     status: task.status,
     priority: task.priority,
     dueDate: task.dueDate,

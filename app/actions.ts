@@ -23,7 +23,7 @@ import { noteFormSchema } from "@/lib/validations/note";
 
 const updateTaskStatusSchema = z.object({
   taskId: z.string().cuid(),
-  status: z.enum(["ACTIVE", "BLOCK", "FINISHED", "PUBLISHED_PROD"]),
+  status: z.enum(["ACTIVE", "IN_QA", "BLOCK", "FINISHED", "PUBLISHED_PROD"]),
 });
 
 export async function updateTaskStatus(taskId: string, status: string) {
@@ -64,6 +64,8 @@ function toTaskData(values: TaskFormValues) {
     projectId: values.projectId,
     title: values.title,
     description: values.description ? values.description : null,
+    ticketNumber: values.ticketNumber ? values.ticketNumber : null,
+    url: values.url ? values.url : null,
     status: values.status,
     priority: values.priority,
     dueDate: values.dueDate ? new Date(values.dueDate) : null,

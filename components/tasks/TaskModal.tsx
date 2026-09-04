@@ -30,6 +30,7 @@ import {
 
 const STATUS_LABEL: Record<(typeof STATUS_VALUES)[number], string> = {
   ACTIVE: "Activa",
+  IN_QA: "En QA",
   BLOCK: "Block",
   FINISHED: "Finalizada",
   PUBLISHED_PROD: "Publicada prod",
@@ -65,6 +66,8 @@ export type TaskModalTask = {
   projectId: string;
   title: string;
   description: string | null;
+  ticketNumber: string | null;
+  url: string | null;
   status: TaskFormValues["status"];
   priority: TaskFormValues["priority"];
   dueDate: Date | null;
@@ -193,6 +196,38 @@ export function TaskModal({
               name="description"
               defaultValue={task?.description ?? ""}
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ticketNumber">Nro de tarea</Label>
+              <Input
+                id="ticketNumber"
+                name="ticketNumber"
+                placeholder="ej. PROJ-123"
+                defaultValue={task?.ticketNumber ?? ""}
+              />
+              {state.fieldErrors?.ticketNumber && (
+                <p className="text-xs text-destructive">
+                  {state.fieldErrors.ticketNumber[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="url">URL</Label>
+              <Input
+                id="url"
+                name="url"
+                type="url"
+                placeholder="https://…"
+                defaultValue={task?.url ?? ""}
+              />
+              {state.fieldErrors?.url && (
+                <p className="text-xs text-destructive">
+                  {state.fieldErrors.url[0]}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

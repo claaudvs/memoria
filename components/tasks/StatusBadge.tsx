@@ -8,10 +8,11 @@ import { updateTaskStatus } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const STATUS_ORDER: Status[] = ["ACTIVE", "BLOCK", "FINISHED", "PUBLISHED_PROD"];
+const STATUS_ORDER: Status[] = ["ACTIVE", "IN_QA", "BLOCK", "FINISHED", "PUBLISHED_PROD"];
 
 const STATUS_LABEL: Record<Status, string> = {
   ACTIVE: "Activa",
+  IN_QA: "En QA",
   BLOCK: "Block",
   FINISHED: "Finalizada",
   PUBLISHED_PROD: "Publicada prod",
@@ -19,6 +20,7 @@ const STATUS_LABEL: Record<Status, string> = {
 
 const STATUS_STYLE: Record<Status, string> = {
   ACTIVE: "bg-status-active-bg text-status-active",
+  IN_QA: "bg-status-qa-bg text-status-qa",
   BLOCK: "bg-status-block-bg text-status-block",
   FINISHED: "bg-status-finished-bg text-status-finished",
   PUBLISHED_PROD: "bg-status-published-bg text-status-published",
@@ -26,6 +28,7 @@ const STATUS_STYLE: Record<Status, string> = {
 
 const STATUS_DOT_COLOR: Record<Status, string> = {
   ACTIVE: "bg-status-active",
+  IN_QA: "bg-status-qa",
   BLOCK: "bg-status-block",
   FINISHED: "bg-status-finished",
   PUBLISHED_PROD: "bg-status-published",

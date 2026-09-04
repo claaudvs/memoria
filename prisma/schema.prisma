@@ -8,6 +8,7 @@ datasource db {
 
 enum Status {
   ACTIVE
+  IN_QA
   BLOCK
   FINISHED
   PUBLISHED_PROD
@@ -53,14 +54,16 @@ model Task {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  projectId   String    @map("project_id")
-  title       String
-  number      Int       @default(autoincrement())
-  description String?
-  status      Status    @default(ACTIVE)
-  priority    Priority  @default(MEDIUM)
-  dueDate     DateTime? @map("due_date")
-  pinned      Boolean   @default(false)
+  projectId    String    @map("project_id")
+  title        String
+  number       Int       @default(autoincrement())
+  ticketNumber String?   @map("ticket_number")
+  url          String?
+  description  String?
+  status       Status    @default(ACTIVE)
+  priority     Priority  @default(MEDIUM)
+  dueDate      DateTime? @map("due_date")
+  pinned       Boolean   @default(false)
 
   project          Project           @relation(fields: [projectId], references: [id])
   taskReleases     TaskRelease[]

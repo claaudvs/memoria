@@ -1,56 +1,67 @@
-import { Clock, ListTodo } from "lucide-react";
 import Link from "next/link";
 
-import { avatarStyle, cn, formatRelativeTime, initial } from "@/lib/utils";
+import { cn, dotColor } from "@/lib/utils";
 
 export type ProjectCardProps = {
   id: string;
   name: string;
   description: string | null;
-  updatedAt: Date;
-  activeTaskCount: number;
+  activeCount: number;
+  qaCount: number;
+  finishedCount: number;
 };
 
 export function ProjectCard({
   id,
   name,
   description,
-  updatedAt,
-  activeTaskCount,
+  activeCount,
+  qaCount,
+  finishedCount,
 }: ProjectCardProps) {
   return (
     <Link
       href={`/projects/${id}`}
-      className="flex flex-col gap-4 rounded-2xl bg-card p-4 shadow-float transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float-hover"
+      className="flex overflow-hidden rounded-[10px] border border-border bg-card shadow-[0_1px_2px_rgba(0,0,0,0.05),0_6px_16px_-6px_rgba(0,0,0,0.10)] transition-all duration-[180ms] ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_14px_28px_-10px_rgba(0,0,0,0.18)]"
     >
-      <div
-        className={cn(
-          "flex size-12 shrink-0 items-center justify-center rounded-2xl text-lg font-bold",
-          avatarStyle(name),
-        )}
-      >
-        {initial(name)}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <h3 className="leading-snug font-semibold">{name}</h3>
-        <p className="line-clamp-2 text-sm text-muted-foreground">
+      <div className={cn("w-1 shrink-0", dotColor(name))} />
+      <div className="flex min-w-0 flex-1 flex-col gap-3 px-5 py-[18px]">
+        <div>
+          <span className="font-mono text-[10.5px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+            {name}
+          </span>
+          <h3 className="mt-1.5 text-base leading-snug font-semibold">{name}</h3>
+        </div>
+        <p className="line-clamp-2 text-[12.5px] text-muted-foreground">
           {description || "Sin descripción."}
         </p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-3 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <ListTodo className="size-3" />
-          {activeTaskCount === 0
-            ? "Sin tareas activas"
-            : `${activeTaskCount} tarea${activeTaskCount === 1 ? "" : "s"} activa${activeTaskCount === 1 ? "" : "s"}`}
-        </span>
-        <span className="flex items-center gap-1">
-          <Clock className="size-3" />
-          {formatRelativeTime(updatedAt)}
-        </span>
+        <div className="flex gap-2.5 border-t border-border pt-3">
+          <Breakdown value={activeCount} label="Activas" className="text-status-active" />
+          <Breakdown value={qaCount} label="En QA" className="text-status-qa" />
+          <Breakdown
+            value={finishedCount}
+            label="Finalizadas"
+            className="text-status-finished"
+          />
+        </div>
       </div>
     </Link>
+  );
+}
+
+function Breakdown({
+  value,
+  label,
+  className,
+}: {
+  value: number;
+  label: string;
+  className: string;
+}) {
+  return (
+    <div className="flex flex-1 flex-col gap-0.5">
+      <span className={cn("font-mono text-[17px] font-semibold", className)}>{value}</span>
+      <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
+    </div>
   );
 }

@@ -28,6 +28,8 @@ export type TaskDetailTask = {
   number: number;
   title: string;
   description: string | null;
+  ticketNumber: string | null;
+  url: string | null;
   status: Status;
   priority: Priority;
   dueDate: Date | null;
@@ -71,6 +73,8 @@ export function TaskDetailView({
     projectId: task.projectId,
     title: task.title,
     description: task.description,
+    ticketNumber: task.ticketNumber,
+    url: task.url,
     status: task.status,
     priority: task.priority,
     dueDate: task.dueDate,
@@ -254,6 +258,37 @@ export function TaskDetailView({
                 >
                   {task.dueDate ? DATE_FORMATTER.format(task.dueDate) : "Sin fecha"}
                 </button>
+              </MetaRow>
+
+              <MetaRow label="Nro de tarea">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(true)}
+                  className="border-b border-dashed border-muted-foreground/30 text-sm font-medium text-foreground/80 hover:text-foreground"
+                >
+                  {task.ticketNumber ?? "Sin número"}
+                </button>
+              </MetaRow>
+
+              <MetaRow label="URL">
+                {task.url ? (
+                  <a
+                    href={task.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="max-w-[160px] truncate text-sm font-medium text-foreground/80 underline decoration-muted-foreground/40 underline-offset-3 hover:text-foreground"
+                  >
+                    {task.url}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setEditModalOpen(true)}
+                    className="border-b border-dashed border-muted-foreground/30 text-sm font-medium text-foreground/80 hover:text-foreground"
+                  >
+                    Sin URL
+                  </button>
+                )}
               </MetaRow>
 
               <div className="flex min-w-0 flex-col gap-1.5 border-t border-border pt-3.5">

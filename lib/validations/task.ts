@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const STATUS_VALUES = ["ACTIVE", "BLOCK", "FINISHED", "PUBLISHED_PROD"] as const;
+export const STATUS_VALUES = ["ACTIVE", "IN_QA", "BLOCK", "FINISHED", "PUBLISHED_PROD"] as const;
 export const PRIORITY_VALUES = ["LOW", "MEDIUM", "HIGH"] as const;
 
 // Sentinel select value meaning "create a new release/consolidate", as opposed
@@ -18,6 +18,14 @@ export const taskFormSchema = z.object({
     .string()
     .trim()
     .max(2000, "Máximo 2000 caracteres.")
+    .optional()
+    .or(z.literal("")),
+  ticketNumber: z.string().trim().max(50, "Máximo 50 caracteres.").optional().or(z.literal("")),
+  url: z
+    .string()
+    .trim()
+    .max(500, "Máximo 500 caracteres.")
+    .url("URL inválida.")
     .optional()
     .or(z.literal("")),
   status: z.enum(STATUS_VALUES),
@@ -39,6 +47,8 @@ export function parseTaskFormData(formData: FormData) {
     projectId: formData.get("projectId"),
     title: formData.get("title"),
     description: formData.get("description"),
+    ticketNumber: formData.get("ticketNumber"),
+    url: formData.get("url"),
     status: formData.get("status"),
     priority: formData.get("priority"),
     dueDate: formData.get("dueDate"),

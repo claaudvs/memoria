@@ -28,6 +28,7 @@ import { STATUS_VALUES } from "@/lib/validations/task";
 
 const STATUS_LABEL: Record<(typeof STATUS_VALUES)[number], string> = {
   ACTIVE: "Activa",
+  IN_QA: "En QA",
   BLOCK: "Block",
   FINISHED: "Finalizada",
   PUBLISHED_PROD: "Publicada prod",
